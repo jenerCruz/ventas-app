@@ -1,1 +1,8 @@
-[{"id": 1, "nombre": "Sucursal Centro"}, {"id": 2, "nombre": "Sucursal Norte"}]
+[
+  { "id": 1, "nombre": "Coppel 385" },
+  { "id": 2, "nombre": "Coppel 363" },
+  { "id": 3, "nombre": "Elektra 218" },
+  { "id": 4, "nombre": "Chedraui 23" },
+  { "id": 5, "nombre": "Chedraui 99" },
+  { "id": 6, "nombre": "Chedraui 105" }
+]

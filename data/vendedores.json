@@ -1,1 +1,18 @@
-[{"id": 1, "nombre": "Vendedor 1", "sucursal_id": 1}, {"id": 2, "nombre": "Vendedor 2", "sucursal_id": 2}]
+[
+  { "id": 1, "nombre": "ACT6696", "sucursal_id": 1 },
+  { "id": 2, "nombre": "ACT65345", "sucursal_id": 1 },
+  { "id": 3, "nombre": "ACT745607", "sucursal_id": 1 },
+
+  { "id": 4, "nombre": "ACT51333", "sucursal_id": 2 },
+  { "id": 5, "nombre": "ACT27490", "sucursal_id": 2 },
+  { "id": 6, "nombre": "ACT93550", "sucursal_id": 2 },
+
+  { "id": 7, "nombre": "ACT29733", "sucursal_id": 3 },
+  { "id": 8, "nombre": "ACT12505", "sucursal_id": 3 },
+
+  { "id": 9, "nombre": "ACT25086", "sucursal_id": 4 },
+
+  { "id": 10, "nombre": "ACT31981", "sucursal_id": 5 },
+
+  { "id": 11, "nombre": "ACT26557", "sucursal_id": 6 }
+]

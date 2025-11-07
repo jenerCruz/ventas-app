@@ -3,96 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard de Ventas</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Dashboard de Ventas (Piezas)</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.2.0"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8fafc;
-    }
-    .card {
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    .card-title {
-      font-weight: 600;
-      color: #2d3748;
-    }
+    .card { border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    .card-title { font-weight: 600; color: #2d3748; }
   </style>
 </head>
 <body class="p-6">
-  <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard de Ventas</h1>
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard de Ventas (Piezas)</h1>
 
   <!-- Filtros -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
     <select id="filtroSucursal" class="p-2 border rounded-lg">
       <option value="todos">Todas las Sucursales</option>
     </select>
-    <select id="filtroPromotor" class="p-2 border rounded-lg">
-      <option value="todos">Todos los Promotores</option>
-    </select>
     <input type="date" id="filtroFecha" class="p-2 border rounded-lg">
-    <button id="btnFiltrar" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700">Filtrar</button>
+    <button id="btnFiltrar" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 col-span-2 md:col-span-1">Filtrar</button>
   </div>
 
   <!-- Tarjetas de Resumen -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
     <div class="card bg-white p-4">
-      <p class="card-title text-sm text-gray-500">Ventas Totales</p>
-      <p id="totalVentas" class="text-2xl font-bold text-gray-800">$0.00</p>
+      <p class="card-title text-sm text-gray-500">Piezas Totales Vendidas</p>
+      <p id="totalPiezas" class="text-2xl font-bold text-gray-800">0</p>
     </div>
     <div class="card bg-white p-4">
-      <p class="card-title text-sm text-gray-500">Meta Mensual</p>
-      <p id="metaMensual" class="text-2xl font-bold text-gray-800">$0.00</p>
+      <p class="card-title text-sm text-gray-500">Meta Total</p>
+      <p id="metaTotal" class="text-2xl font-bold text-gray-800">0</p>
     </div>
     <div class="card bg-white p-4">
-      <p class="card-title text-sm text-gray-500">Alcance</p>
-      <p id="alcance" class="text-2xl font-bold text-green-600">0%</p>
-    </div>
-    <div class="card bg-white p-4">
-      <p class="card-title text-sm text-gray-500">Promedio Diario</p>
-      <p id="promedioDiario" class="text-2xl font-bold text-gray-800">$0.00</p>
+      <p class="card-title text-sm text-gray-500">Avance</p>
+      <p id="avance" class="text-2xl font-bold text-green-600">0%</p>
     </div>
   </div>
 
-  <!-- Gráficos -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-    <div class="card bg-white p-4">
-      <h2 class="card-title mb-4">Ventas por Sucursal</h2>
-      <canvas id="ventasPorSucursal"></canvas>
-    </div>
-    <div class="card bg-white p-4">
-      <h2 class="card-title mb-4">Ventas Diarias</h2>
-      <canvas id="ventasDiarias"></canvas>
+  <!-- Gráfico de Avance -->
+  <div class="card bg-white p-4 mb-6">
+    <h2 class="card-title mb-4">Avance por Sucursal</h2>
+    <canvas id="avancePorSucursal"></canvas>
+  </div>
+
+  <!-- Formulario para Establecer Metas -->
+  <div class="card bg-white p-4 mb-6">
+    <h2 class="card-title mb-4">Establecer Meta de Piezas</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <select id="metaSucursal" class="p-2 border rounded-lg">
+        <option value="">Seleccionar Sucursal</option>
+      </select>
+      <input type="number" id="metaPiezas" class="p-2 border rounded-lg" placeholder="Piezas">
+      <button id="btnEstablecerMeta" class="bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700">Establecer Meta</button>
     </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="card bg-white p-4">
-      <h2 class="card-title mb-4">Promedio por Promotor</h2>
-      <canvas id="promedioPorPromotor"></canvas>
-    </div>
-    <div class="card bg-white p-4">
-      <h2 class="card-title mb-4">Alcance de Metas</h2>
-      <canvas id="alcanceMetas"></canvas>
-    </div>
-  </div>
-
-  <!-- Formulario de Registro -->
-  <div class="card bg-white p-6 mt-6">
-    <h2 class="card-title mb-4 text-xl">Registrar Venta</h2>
+  <!-- Formulario de Registro de Ventas -->
+  <div class="card bg-white p-4">
+    <h2 class="card-title mb-4">Registrar Venta (Piezas)</h2>
     <form id="ventaForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <select id="sucursal_id" class="p-2 border rounded-lg" required>
         <option value="">Seleccionar Sucursal</option>
       </select>
       <select id="vendedor_id" class="p-2 border rounded-lg" required>
-        <option value="">Seleccionar Promotor</option>
+        <option value="">Seleccionar Vendedor</option>
       </select>
-      <input type="number" id="monto" class="p-2 border rounded-lg" placeholder="Monto" required>
+      <input type="number" id="piezas" class="p-2 border rounded-lg" placeholder="Piezas" required>
       <button type="submit" class="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700">Registrar</button>
     </form>
   </div>

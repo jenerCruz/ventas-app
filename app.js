@@ -8,16 +8,49 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// Rutas a los archivos JSON
-const ventasPath = path.join(__dirname, 'data', 'ventas.json');
-const sucursalesPath = path.join(__dirname, 'data', 'sucursales.json');
-const vendedoresPath = path.join(__dirname, 'data', 'vendedores.json');
+// Ruta a la carpeta 'public' para servir archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Leer archivo JSON
-const readJSON = (filePath) => JSON.parse(fs.readFileSync(filePath, 'utf8'));
+// Ruta a los archivos JSON
+const dataDir = path.join(__dirname, 'data');
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir);
+}
 
-// Escribir archivo JSON
-const writeJSON = (filePath, data) => fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+// Función para leer archivos JSON
+const readJSON = (filePath) => {
+  try {
+    if (!fs.existsSync(filePath)) {
+      fs.writeFileSync(filePath, JSON.stringify([]));
+    }
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (error) {
+    console.error(`Error al leer ${filePath}:`, error);
+    return [];
+  }
+};
+
+// Función para escribir archivos JSON
+const writeJSON = (filePath, data) => {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error(`Error al escribir ${filePath}:`, error);
+  }
+};
+
+// Archivos JSON
+const ventasPath = path.join(dataDir, 'ventas.json');
+const sucursalesPath = path.join(dataDir, 'sucursales.json');
+const vendedoresPath = path.join(dataDir, 'vendedores.json');
+const metasPath = path.join(dataDir, 'metas.json');
+
+// Inicializar archivos JSON si no existen
+[ventasPath, sucursalesPath, vendedoresPath, metasPath].forEach(filePath => {
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify([]));
+  }
+});
 
 // API para ventas
 app.get('/api/ventas', (req, res) => {
@@ -27,25 +60,53 @@ app.get('/api/ventas', (req, res) => {
 
 app.post('/api/ventas', (req, res) => {
   const ventas = readJSON(ventasPath);
-  const nuevaVenta = { id: ventas.length + 1, ...req.body };
+  const nuevaVenta = {
+    id: ventas.length > 0 ? Math.max(...ventas.map(v => v.id)) + 1 : 1,
+    ...req.body,
+    fecha: req.body.fecha || new Date().toISOString().split('T')[0]
+  };
   ventas.push(nuevaVenta);
   writeJSON(ventasPath, ventas);
   res.status(201).json(nuevaVenta);
 });
 
-// API para sucursales
+// API para metas
+app.get('/api/metas', (req, res) => {
+  const metas = readJSON(metasPath);
+  res.json(metas);
+});
+
+app.post('/api/metas', (req, res) => {
+  const metas = readJSON(metasPath);
+  const { sucursal_id, meta } = req.body;
+  const index = metas.findIndex(m => m.sucursal_id === sucursal_id);
+  if (index >= 0) {
+    metas[index].meta = meta;
+  } else {
+    metas.push({ sucursal_id, meta });
+  }
+  writeJSON(metasPath, metas);
+  res.status(201).json(metas);
+});
+
+// API para sucursales y vendedores
 app.get('/api/sucursales', (req, res) => {
   const sucursales = readJSON(sucursalesPath);
   res.json(sucursales);
 });
 
-// API para vendedores
 app.get('/api/vendedores', (req, res) => {
   const vendedores = readJSON(vendedoresPath);
   res.json(vendedores);
 });
 
+// Ruta para servir el index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Iniciar servidor
-app.listen(3000, () => {
-  console.log('Backend en http://localhost:3000');
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor en http://localhost:${PORT}`);
 });
