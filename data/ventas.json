@@ -1,44 +1,16 @@
 [
-  {
-    "id": 1,
-    "vendedor_id": 1,
-    "sucursal_id": 1,
-    "monto": 0,
-    "fecha": "2025-11-01"
-  },
-  {
-    "id": 2,
-    "vendedor_id": 1,
-    "sucursal_id": 1,
-    "monto": 0,
-    "fecha": "2025-11-01"
-  },
-  {
-    "id": 3,
-    "vendedor_id": 4,
-    "sucursal_id": 1,
-    "monto": 0,
-    "fecha": "2025-11-01"
-  },
-  {
-    "id": 4,
-    "vendedor_id": 4,
-    "sucursal_id": 1,
-    "monto": 0,
-    "fecha": "2025-11-01"
-  },
-  {
-    "id": 5,
-    "vendedor_id": 4,
-    "sucursal_id": 1,
-    "monto": 0,
-    "fecha": "2025-11-01"
-  },
-  {
-    "id": 6,
-    "vendedor_id": 4,
-    "sucursal_id": 1,
-    "monto": 0,
-    "fecha": "2025-11-01"
-  }
+  { "id": 1, "sucursal_id": 1, "vendedor_id": 1, "producto": "Amigo Kit", "piezas": 150, "fecha": "2025-11-01" },
+  { "id": 2, "sucursal_id": 1, "vendedor_id": 2, "producto": "Amigo Kit", "piezas": 200, "fecha": "2025-11-02" },
+  { "id": 3, "sucursal_id": 1, "vendedor_id": 1, "producto": "Chip Cero", "piezas": 30, "fecha": "2025-11-01" },
+  { "id": 4, "sucursal_id": 1, "vendedor_id": 2, "producto": "Chip Cero", "piezas": 40, "fecha": "2025-11-03" },
+  { "id": 5, "sucursal_id": 1, "vendedor_id": 1, "producto": "Portabilidad", "piezas": 5, "fecha": "2025-11-04" },
+  { "id": 6, "sucursal_id": 1, "vendedor_id": 2, "producto": "Chip Express", "piezas": 8, "fecha": "2025-11-05" },
+
+  { "id": 7, "sucursal_id": 2, "vendedor_id": 3, "producto": "Amigo Kit", "piezas": 100, "fecha": "2025-11-01" },
+  { "id": 8, "sucursal_id": 2, "vendedor_id": 4, "producto": "Amigo Kit", "piezas": 120, "fecha": "2025-11-02" },
+  { "id": 9, "sucursal_id": 2, "vendedor_id": 3, "producto": "Chip Cero", "piezas": 25, "fecha": "2025-11-03" },
+  { "id": 10, "sucursal_id": 2, "vendedor_id": 4, "producto": "Chip Cero", "piezas": 35, "fecha": "2025-11-04" },
+  { "id": 11, "sucursal_id": 2, "vendedor_id": 3, "producto": "Portabilidad", "piezas": 8, "fecha": "2025-11-05" },
+  { "id": 12, "sucursal_id": 2, "vendedor_id": 4, "producto": "Chip Express", "piezas": 10, "fecha": "2025-11-06" }
 ]
+
