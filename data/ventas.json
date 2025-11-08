@@ -3,42 +3,42 @@
     "id": 1,
     "vendedor_id": 1,
     "sucursal_id": 1,
-    "monto": 20,
-    "fecha": "2025-11-07"
+    "monto": 0,
+    "fecha": "2025-11-01"
   },
   {
     "id": 2,
     "vendedor_id": 1,
     "sucursal_id": 1,
-    "monto": 20,
-    "fecha": "2025-11-07"
+    "monto": 0,
+    "fecha": "2025-11-01"
   },
   {
     "id": 3,
     "vendedor_id": 4,
     "sucursal_id": 1,
-    "monto": 20,
-    "fecha": "2025-11-07"
+    "monto": 0,
+    "fecha": "2025-11-01"
   },
   {
     "id": 4,
     "vendedor_id": 4,
     "sucursal_id": 1,
-    "monto": 20,
-    "fecha": "2025-11-07"
+    "monto": 0,
+    "fecha": "2025-11-01"
   },
   {
     "id": 5,
     "vendedor_id": 4,
     "sucursal_id": 1,
-    "monto": 20,
-    "fecha": "2025-11-07"
+    "monto": 0,
+    "fecha": "2025-11-01"
   },
   {
     "id": 6,
     "vendedor_id": 4,
     "sucursal_id": 1,
-    "monto": 20,
-    "fecha": "2025-11-07"
+    "monto": 0,
+    "fecha": "2025-11-01"
   }
 ]
