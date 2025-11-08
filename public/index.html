@@ -1,108 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#3b82f6">
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .then(registration => console.log('ServiceWorker registrado'))
-        .catch(err => console.log('Error al registrar ServiceWorker:', err));
-    });
-  )
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard de Ventas (Piezas)</title>
-  <script> src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta name="theme-color" content="#3b82f6">
+  <link rel="manifest" href="/manifest.json">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    .card { border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-    .card-title { font-weight: 600; color: #2d3748; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8fafc;
+    }
+    .card {
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .card-title {
+      font-weight: 600;
+      color: #2d3748;
+    }
+    .dark {
+      background-color: #1a202c;
+      color: #e2e8f0;
+    }
+    .dark .card {
+      background-color: #2d3748;
+      color: #e2e8f0;
+    }
   </style>
 </head>
 <body class="p-6">
-  <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard de Ventas (Piezas)</h1>
+  <h1 class="text-3xl font-bold text-gray-800 mb-6 dark:text-white">Dashboard de Ventas (Piezas)</h1>
+
   <!-- Filtros -->
-  <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-    <select id="filtroSucursal" class="p-2 border rounded-lg">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <select id="filtroSucursal" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white">
       <option value="todos">Todas las Sucursales</option>
     </select>
-    <select id="filtroProducto" class="p-2 border rounded-lg">
-      <option value="todos">Todos los Productos</option>
-    </select>
-    <select id="filtroMes" class="p-2 border rounded-lg">
-      <option value="todos">Todos los Meses</option>
-    </select>
-    <input type="date" id="filtroFecha" class="p-2 border rounded-lg">
+    <input type="date" id="filtroFecha" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white">
     <button id="btnFiltrar" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 col-span-2 md:col-span-1">Filtrar</button>
   </div>
+
   <!-- Tarjetas de Resumen -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    <div class="card bg-white p-4">
-      <p class="card-title text-sm text-gray-500">Piezas Totales Vendidas</p>
-      <p id="totalPiezas" class="text-2xl font-bold text-gray-800">0</p>
+    <div class="card bg-white p-4 dark:bg-gray-800">
+      <p class="card-title text-sm text-gray-500 dark:text-gray-300">Piezas Totales Vendidas</p>
+      <p id="totalPiezas" class="text-2xl font-bold text-gray-800 dark:text-white">0</p>
     </div>
-    <div class="card bg-white p-4">
-      <p class="card-title text-sm text-gray-500">Meta Total</p>
-      <p id="metaTotal" class="text-2xl font-bold text-gray-800">0</p>
+    <div class="card bg-white p-4 dark:bg-gray-800">
+      <p class="card-title text-sm text-gray-500 dark:text-gray-300">Meta Total</p>
+      <p id="metaTotal" class="text-2xl font-bold text-gray-800 dark:text-white">0</p>
     </div>
-    <div class="card bg-white p-4">
-      <p class="card-title text-sm text-gray-500">Avance</p>
-      <p id="avance" class="text-2xl font-bold text-green-600">0%</p>
+    <div class="card bg-white p-4 dark:bg-gray-800">
+      <p class="card-title text-sm text-gray-500 dark:text-gray-300">Avance</p>
+      <p id="avance" class="text-2xl font-bold text-green-600 dark:text-green-400">0%</p>
     </div>
   </div>
+
   <!-- Gráfico de Avance -->
-  <div class="card bg-white p-4 mb-6">
-    <h2 class="card-title mb-4">Avance por Sucursal y Producto</h2>
+  <div class="card bg-white p-4 mb-6 dark:bg-gray-800">
+    <h2 class="card-title mb-4 dark:text-white">Avance por Sucursal</h2>
     <canvas id="avancePorSucursal"></canvas>
   </div>
+
   <!-- Formulario para Establecer Metas -->
-  <div class="card bg-white p-4 mb-6">
-    <h2 class="card-title mb-4">Establecer Meta de Piezas</h2>
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-      <select id="metaSucursal" class="p-2 border rounded-lg">
+  <div class="card bg-white p-4 mb-6 dark:bg-gray-800">
+    <h2 class="card-title mb-4 dark:text-white">Establecer Meta de Piezas</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <select id="metaSucursal" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white">
         <option value="">Seleccionar Sucursal</option>
       </select>
-      <select id="metaProducto" class="p-2 border rounded-lg">
-        <option value="">Seleccionar Producto</option>
-        <option value="Amigo Kit">Amigo Kit</option>
-        <option value="Chip Cero">Chip Cero</option>
-        <option value="Portabilidad">Portabilidad</option>
-        <option value="Chip Express">Chip Express</option>
-      </select>
-      <select id="metaMes" class="p-2 border rounded-lg">
-        <option value="">Seleccionar Mes</option>
-        <option value="noviembre">Noviembre</option>
-        <option value="diciembre">Diciembre</option>
-      </select>
-      <input type="number" id="metaPiezas" class="p-2 border rounded-lg" placeholder="Piezas">
+      <input type="number" id="metaPiezas" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Piezas">
       <button id="btnEstablecerMeta" class="bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700">Establecer Meta</button>
     </div>
   </div>
+
   <!-- Formulario de Registro de Ventas -->
-  <div class="card bg-white p-4">
-    <h2 class="card-title mb-4">Registrar Venta (Piezas)</h2>
-    <form id="ventaForm" class="grid grid-cols-1 md:grid-cols-5 gap-4">
-      <select id="sucursal_id" class="p-2 border rounded-lg" required>
+  <div class="card bg-white p-4 dark:bg-gray-800">
+    <h2 class="card-title mb-4 dark:text-white">Registrar Venta (Piezas)</h2>
+    <form id="ventaForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <select id="sucursal_id" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white" required>
         <option value="">Seleccionar Sucursal</option>
       </select>
-      <select id="vendedor_id" class="p-2 border rounded-lg" required>
+      <select id="vendedor_id" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white" required>
         <option value="">Seleccionar Vendedor</option>
       </select>
-      <select id="producto" class="p-2 border rounded-lg" required>
-        <option value="">Seleccionar Producto</option>
-        <option value="Amigo Kit">Amigo Kit</option>
-        <option value="Chip Cero">Chip Cero</option>
-        <option value="Portabilidad">Portabilidad</option>
-        <option value="Chip Express">Chip Express</option>
-      </select>
-      <input type="number" id="piezas" class="p-2 border rounded-lg" placeholder="Piezas" required>
+      <input type="number" id="piezas" class="p-2 border rounded-lg dark:bg-gray-700 dark:text-white" placeholder="Piezas" required>
       <button type="submit" class="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700">Registrar</button>
     </form>
   </div>
+
+  <!-- Botón para modo oscuro -->
+  <button id="toggleDarkMode" class="fixed bottom-4 right-4 bg-gray-800 text-white p-2 rounded-full">
+    🌙
+  </button>
+
+  <!-- Service Worker para PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => console.log('ServiceWorker registrado'))
+          .catch(err => console.log('Error al registrar ServiceWorker:', err));
+      });
+    }
+  </script>
+
   <script src="script.js"></script>
 </body>
 </html>
