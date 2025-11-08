@@ -1,14 +1,31 @@
 [
-  {
-    "sucursal_id": 1,
-    "meta": 800
-  },
-  {
-    "sucursal_id": 2,
-    "meta": 800
-  },
-  {
-    "sucursal_id": 3,
-    "meta": 160
-  }
+  { "sucursal_id": 1, "producto": "Amigo Kit", "mes": "noviembre", "meta": 800 },
+  { "sucursal_id": 1, "producto": "Chip Cero", "mes": "noviembre", "meta": 120 },
+  { "sucursal_id": 1, "producto": "Portabilidad", "mes": "noviembre", "meta": 24 },
+  { "sucursal_id": 1, "producto": "Chip Express", "mes": "noviembre", "meta": 29 },
+
+  { "sucursal_id": 2, "producto": "Amigo Kit", "mes": "noviembre", "meta": 600 },
+  { "sucursal_id": 2, "producto": "Chip Cero", "mes": "noviembre", "meta": 100 },
+  { "sucursal_id": 2, "producto": "Portabilidad", "mes": "noviembre", "meta": 20 },
+  { "sucursal_id": 2, "producto": "Chip Express", "mes": "noviembre", "meta": 25 },
+
+  { "sucursal_id": 3, "producto": "Amigo Kit", "mes": "noviembre", "meta": 700 },
+  { "sucursal_id": 3, "producto": "Chip Cero", "mes": "noviembre", "meta": 110 },
+  { "sucursal_id": 3, "producto": "Portabilidad", "mes": "noviembre", "meta": 22 },
+  { "sucursal_id": 3, "producto": "Chip Express", "mes": "noviembre", "meta": 27 },
+
+  { "sucursal_id": 4, "producto": "Amigo Kit", "mes": "noviembre", "meta": 500 },
+  { "sucursal_id": 4, "producto": "Chip Cero", "mes": "noviembre", "meta": 90 },
+  { "sucursal_id": 4, "producto": "Portabilidad", "mes": "noviembre", "meta": 18 },
+  { "sucursal_id": 4, "producto": "Chip Express", "mes": "noviembre", "meta": 22 },
+
+  { "sucursal_id": 5, "producto": "Amigo Kit", "mes": "noviembre", "meta": 400 },
+  { "sucursal_id": 5, "producto": "Chip Cero", "mes": "noviembre", "meta": 80 },
+  { "sucursal_id": 5, "producto": "Portabilidad", "mes": "noviembre", "meta": 16 },
+  { "sucursal_id": 5, "producto": "Chip Express", "mes": "noviembre", "meta": 20 },
+
+  { "sucursal_id": 6, "producto": "Amigo Kit", "mes": "noviembre", "meta": 450 },
+  { "sucursal_id": 6, "producto": "Chip Cero", "mes": "noviembre", "meta": 85 },
+  { "sucursal_id": 6, "producto": "Portabilidad", "mes": "noviembre", "meta": 17 },
+  { "sucursal_id": 6, "producto": "Chip Express", "mes": "noviembre", "meta": 21 }
 ]
