@@ -27,22 +27,22 @@ function cargarDropdowns() {
   const filtroSucursalSelect = document.getElementById('filtroSucursal');
   const metaSucursalSelect = document.getElementById('metaSucursal');
 
-  [sucursalSelect, filtroSucursalSelect, metaSucursalSelect].forEach(select => {
-    select.innerHTML = '<option value="">Seleccionar Sucursal</option>';
-    sucursales.forEach(sucursal => {
-      const option = document.createElement('option');
-      option.value = sucursal.id;
-      option.textContent = sucursal.nombre;
-      select.appendChild(option.cloneNode(true));
-    });
+  // Limpieza inicial
+  sucursalSelect.innerHTML = '<option value="">Seleccionar Sucursal</option>';
+  filtroSucursalSelect.innerHTML = '<option value="todos">Todas las Sucursales</option>';
+  metaSucursalSelect.innerHTML = '<option value="">Seleccionar Sucursal</option>';
+
+  // Poblar sucursales en los tres selects
+  sucursales.forEach(sucursal => {
+    sucursalSelect.add(new Option(sucursal.nombre, sucursal.id));
+    filtroSucursalSelect.add(new Option(sucursal.nombre, sucursal.id));
+    metaSucursalSelect.add(new Option(sucursal.nombre, sucursal.id));
   });
 
+  // Poblar vendedores
   vendedorSelect.innerHTML = '<option value="">Seleccionar Vendedor</option>';
   vendedores.forEach(vendedor => {
-    const option = document.createElement('option');
-    option.value = vendedor.id;
-    option.textContent = vendedor.nombre;
-    vendedorSelect.appendChild(option);
+    vendedorSelect.add(new Option(vendedor.nombre, vendedor.id));
   });
 }
 
@@ -50,7 +50,7 @@ function cargarDropdowns() {
 function actualizarDashboard(filtros = {}) {
   let ventasFiltradas = [...ventas];
   if (filtros.sucursal && filtros.sucursal !== 'todos') {
-    ventasFiltradas = ventasFiltradas.filter(v => v.sucursal_id == filtros.sucursal);
+    ventasFiltradas = ventasFiltradas.filter(v => Number(v.sucursal_id) === Number(filtros.sucursal));
   }
   if (filtros.fecha) {
     ventasFiltradas = ventasFiltradas.filter(v => v.fecha === filtros.fecha);
@@ -73,11 +73,11 @@ function actualizarDashboard(filtros = {}) {
 function actualizarGraficoAvance(ventasFiltradas) {
   const ctx = document.getElementById('avancePorSucursal').getContext('2d');
   const datos = sucursales.map(sucursal => {
-    const ventasSucursal = ventasFiltradas.filter(v => v.sucursal_id === sucursal.id);
+    const ventasSucursal = ventasFiltradas.filter(v => Number(v.sucursal_id) === Number(sucursal.id));
     const piezasVendidas = ventasSucursal.reduce((sum, v) => sum + Number(v.piezas), 0);
-    const metaSucursal = metas.find(m => m.sucursal_id === sucursal.id)?.meta || 0;
+    const metaSucursal = metas.find(m => Number(m.sucursal_id) === Number(sucursal.id))?.meta || 0;
     const avance = metaSucursal > 0 ? (piezasVendidas / metaSucursal) * 100 : 0;
-    return { nombre: sucursal.nombre, piezasVendidas, meta: metaSucursal, avance };
+    return { nombre: sucursal.nombre, piezasVendidas, meta: Number(metaSucursal), avance };
   });
 
   if (avanceChart) {
@@ -101,9 +101,9 @@ function actualizarGraficoAvance(ventasFiltradas) {
 document.getElementById('ventaForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const venta = {
-    vendedor_id: parseInt(document.getElementById('vendedor_id').value),
-    sucursal_id: parseInt(document.getElementById('sucursal_id').value),
-    piezas: parseInt(document.getElementById('piezas').value),
+    vendedor_id: Number(document.getElementById('vendedor_id').value),
+    sucursal_id: Number(document.getElementById('sucursal_id').value),
+    piezas: Number(document.getElementById('piezas').value),
     fecha: new Date().toISOString().split('T')[0]
   };
   try {
@@ -118,8 +118,8 @@ document.getElementById('ventaForm').addEventListener('submit', async (e) => {
 
 // Establecer meta
 document.getElementById('btnEstablecerMeta').addEventListener('click', async () => {
-  const sucursalId = parseInt(document.getElementById('metaSucursal').value);
-  const piezasMeta = parseInt(document.getElementById('metaPiezas').value);
+  const sucursalId = Number(document.getElementById('metaSucursal').value);
+  const piezasMeta = Number(document.getElementById('metaPiezas').value);
   if (!sucursalId || !piezasMeta) return alert('Selecciona sucursal e ingresa piezas');
   try {
     await axios.post('/api/metas', { sucursal_id: sucursalId, meta: piezasMeta });
