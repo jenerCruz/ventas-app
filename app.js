@@ -7,17 +7,13 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-
-// Ruta a la carpeta 'public' para servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Ruta a los archivos JSON
 const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir);
 }
 
-// Función para leer archivos JSON
 const readJSON = (filePath) => {
   try {
     if (!fs.existsSync(filePath)) {
@@ -30,7 +26,6 @@ const readJSON = (filePath) => {
   }
 };
 
-// Función para escribir archivos JSON
 const writeJSON = (filePath, data) => {
   try {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
@@ -39,13 +34,11 @@ const writeJSON = (filePath, data) => {
   }
 };
 
-// Archivos JSON
 const ventasPath = path.join(dataDir, 'ventas.json');
 const sucursalesPath = path.join(dataDir, 'sucursales.json');
 const vendedoresPath = path.join(dataDir, 'vendedores.json');
 const metasPath = path.join(dataDir, 'metas.json');
 
-// Inicializar archivos JSON si no existen
 [ventasPath, sucursalesPath, vendedoresPath, metasPath].forEach(filePath => {
   if (!fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, JSON.stringify([]));
@@ -60,9 +53,13 @@ app.get('/api/ventas', (req, res) => {
 
 app.post('/api/ventas', (req, res) => {
   const ventas = readJSON(ventasPath);
+  const { sucursal_id, vendedor_id, producto, piezas } = req.body;
   const nuevaVenta = {
     id: ventas.length > 0 ? Math.max(...ventas.map(v => v.id)) + 1 : 1,
-    ...req.body,
+    sucursal_id,
+    vendedor_id,
+    producto,
+    piezas,
     fecha: req.body.fecha || new Date().toISOString().split('T')[0]
   };
   ventas.push(nuevaVenta);
@@ -78,12 +75,16 @@ app.get('/api/metas', (req, res) => {
 
 app.post('/api/metas', (req, res) => {
   const metas = readJSON(metasPath);
-  const { sucursal_id, meta } = req.body;
-  const index = metas.findIndex(m => m.sucursal_id === sucursal_id);
+  const { sucursal_id, producto, mes, meta } = req.body;
+  const index = metas.findIndex(m =>
+    m.sucursal_id === sucursal_id &&
+    m.producto === producto &&
+    m.mes === mes
+  );
   if (index >= 0) {
     metas[index].meta = meta;
   } else {
-    metas.push({ sucursal_id, meta });
+    metas.push({ sucursal_id, producto, mes, meta });
   }
   writeJSON(metasPath, metas);
   res.status(201).json(metas);
