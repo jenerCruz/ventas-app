@@ -3,7 +3,7 @@ let sucursales = [];
 let vendedores = [];
 let metas = [];
 let productos = ["Amigo Kit", "Chip Cero", "Portabilidad", "Chip Express"];
-let meses = ["noviembre", "diciembre", "enero"];
+let meses = ["noviembre", "diciembre"];
 let avanceChart = null;
 
 // Cargar datos iniciales
@@ -24,7 +24,6 @@ async function cargarDatos() {
 
 // Cargar dropdowns
 function cargarDropdowns() {
-  // Sucursales
   const sucursalSelect = document.getElementById('sucursal_id');
   const filtroSucursalSelect = document.getElementById('filtroSucursal');
   const metaSucursalSelect = document.getElementById('metaSucursal');
@@ -39,37 +38,34 @@ function cargarDropdowns() {
     metaSucursalSelect.add(new Option(sucursal.nombre, sucursal.id));
   });
 
-  // Vendedores
   const vendedorSelect = document.getElementById('vendedor_id');
   vendedorSelect.innerHTML = '<option value="">Seleccionar Vendedor</option>';
   vendedores.forEach(vendedor => {
     vendedorSelect.add(new Option(vendedor.nombre, vendedor.id));
   });
 
-  // Productos
-  const productoSelect = document.getElementById('producto');
   const filtroProductoSelect = document.getElementById('filtroProducto');
   const metaProductoSelect = document.getElementById('metaProducto');
+  const productoSelect = document.getElementById('producto');
 
-  productoSelect.innerHTML = '<option value="">Seleccionar Producto</option>';
   filtroProductoSelect.innerHTML = '<option value="todos">Todos los Productos</option>';
   metaProductoSelect.innerHTML = '<option value="">Seleccionar Producto</option>';
+  productoSelect.innerHTML = '<option value="">Seleccionar Producto</option>';
 
   productos.forEach(producto => {
-    productoSelect.add(new Option(producto, producto));
     filtroProductoSelect.add(new Option(producto, producto));
     metaProductoSelect.add(new Option(producto, producto));
+    productoSelect.add(new Option(producto, producto));
   });
 
-  // Meses
-  const mesSelect = document.getElementById('filtroMes');
+  const filtroMesSelect = document.getElementById('filtroMes');
   const metaMesSelect = document.getElementById('metaMes');
 
-  mesSelect.innerHTML = '<option value="todos">Todos los Meses</option>';
+  filtroMesSelect.innerHTML = '<option value="todos">Todos los Meses</option>';
   metaMesSelect.innerHTML = '<option value="">Seleccionar Mes</option>';
 
   meses.forEach(mes => {
-    mesSelect.add(new Option(mes, mes));
+    filtroMesSelect.add(new Option(mes, mes));
     metaMesSelect.add(new Option(mes, mes));
   });
 }
@@ -98,26 +94,31 @@ function actualizarDashboard(filtros = {}) {
     ventasFiltradas = ventasFiltradas.filter(v => v.fecha === filtros.fecha);
   }
 
-  // Calcular totales
-  const totalPiezas = ventasFiltradas.reduce((sum, venta) => sum + Number(venta.piezas), 0);
-
-  // Calcular metas totales (filtradas)
-  const metasFiltradas = metas.filter(m => {
-    return (
-      (!filtros.sucursal || filtros.sucursal === 'todos' || Number(m.sucursal_id) === Number(filtros.sucursal)) &&
-      (!filtros.producto || filtros.producto === 'todos' || m.producto === filtros.producto) &&
-      (!filtros.mes || filtros.mes === 'todos' || m.mes === filtros.mes)
-    );
+  const totalesPorProducto = {};
+  productos.forEach(producto => {
+    totalesPorProducto[producto] = ventasFiltradas
+      .filter(v => v.producto === producto)
+      .reduce((sum, venta) => sum + Number(venta.piezas), 0);
   });
 
-  const metaTotal = metasFiltradas.reduce((sum, meta) => sum + Number(meta.meta), 0);
-  const avance = metaTotal > 0 ? Math.min((totalPiezas / metaTotal) * 100, 100) : 0;
+  const metasPorProducto = {};
+  productos.forEach(producto => {
+    const meta = metas.find(m =>
+      (!filtros.sucursal || filtros.sucursal === 'todos' || Number(m.sucursal_id) === Number(filtros.sucursal)) &&
+      m.producto === producto &&
+      (!filtros.mes || filtros.mes === 'todos' || m.mes === filtros.mes)
+    );
+    metasPorProducto[producto] = meta ? Number(meta.meta) : 0;
+  });
+
+  const totalPiezas = Object.values(totalesPorProducto).reduce((sum, valor) => sum + valor, 0);
+  const metaTotal = Object.values(metasPorProducto).reduce((sum, valor) => sum + valor, 0);
+  const avanceGeneral = metaTotal > 0 ? Math.min((totalPiezas / metaTotal) * 100, 100) : 0;
 
   document.getElementById('totalPiezas').textContent = totalPiezas;
   document.getElementById('metaTotal').textContent = metaTotal;
-  document.getElementById('avance').textContent = `${avance.toFixed(1)}%`;
+  document.getElementById('avance').textContent = `${avanceGeneral.toFixed(1)}%`;
 
-  // Actualizar gráfico
   actualizarGraficoAvance(ventasFiltradas, filtros);
 }
 
@@ -125,17 +126,16 @@ function actualizarDashboard(filtros = {}) {
 function actualizarGraficoAvance(ventasFiltradas, filtros) {
   const ctx = document.getElementById('avancePorSucursal').getContext('2d');
 
-  // Agrupar datos por sucursal y producto
   const datosPorSucursal = sucursales.map(sucursal => {
     const ventasSucursal = ventasFiltradas.filter(v => Number(v.sucursal_id) === Number(sucursal.id));
 
     const productosSucursal = {};
     productos.forEach(producto => {
-      const ventasProducto = ventasSucursal.filter(v => v.producto === producto);
-      productosSucursal[producto] = ventasProducto.reduce((sum, v) => sum + Number(v.piezas), 0);
+      productosSucursal[producto] = ventasSucursal
+        .filter(v => v.producto === producto)
+        .reduce((sum, v) => sum + Number(v.piezas), 0);
     });
 
-    // Obtener metas por producto para esta sucursal
     const metasSucursal = {};
     productos.forEach(producto => {
       const meta = metas.find(m =>
@@ -153,11 +153,9 @@ function actualizarGraficoAvance(ventasFiltradas, filtros) {
     };
   });
 
-  // Preparar datos para el gráfico
   const labels = datosPorSucursal.map(d => d.nombre);
   const datasets = [];
 
-  // Datasets de ventas por producto
   productos.forEach((producto, index) => {
     datasets.push({
       label: producto,
@@ -166,12 +164,10 @@ function actualizarGraficoAvance(ventasFiltradas, filtros) {
     });
   });
 
-  // Datasets de metas por producto
   productos.forEach((producto, index) => {
     datasets.push({
       label: `${producto} (Meta)`,
       data: datosPorSucursal.map(d => d.metas[producto]),
-      backgroundColor: [`#93c5fd`, `#fca5a5`, `#6ee7b7`, `#fed7aa`][index],
       type: 'line',
       borderColor: [`#3b82f6`, `#ef4444`, `#10b981`, `#f59e0b`][index],
       borderWidth: 2,
@@ -179,7 +175,6 @@ function actualizarGraficoAvance(ventasFiltradas, filtros) {
     });
   });
 
-  // Crear o actualizar gráfico
   if (avanceChart) {
     avanceChart.data.labels = labels;
     avanceChart.data.datasets = datasets;
@@ -256,4 +251,3 @@ document.getElementById('btnFiltrar').addEventListener('click', () => {
 
 // Cargar datos al inicio
 document.addEventListener('DOMContentLoaded', cargarDatos);
-
