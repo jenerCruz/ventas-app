@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -15,16 +14,20 @@
 </head>
 <body class="p-6">
   <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard de Ventas (Piezas)</h1>
-
   <!-- Filtros -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
     <select id="filtroSucursal" class="p-2 border rounded-lg">
       <option value="todos">Todas las Sucursales</option>
+    </select>
+    <select id="filtroProducto" class="p-2 border rounded-lg">
+      <option value="todos">Todos los Productos</option>
+    </select>
+    <select id="filtroMes" class="p-2 border rounded-lg">
+      <option value="todos">Todos los Meses</option>
     </select>
     <input type="date" id="filtroFecha" class="p-2 border rounded-lg">
     <button id="btnFiltrar" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 col-span-2 md:col-span-1">Filtrar</button>
   </div>
-
   <!-- Tarjetas de Resumen -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
     <div class="card bg-white p-4">
@@ -40,40 +43,45 @@
       <p id="avance" class="text-2xl font-bold text-green-600">0%</p>
     </div>
   </div>
-
   <!-- Gráfico de Avance -->
   <div class="card bg-white p-4 mb-6">
-    <h2 class="card-title mb-4">Avance por Sucursal</h2>
+    <h2 class="card-title mb-4">Avance por Sucursal y Producto</h2>
     <canvas id="avancePorSucursal"></canvas>
   </div>
-
   <!-- Formulario para Establecer Metas -->
   <div class="card bg-white p-4 mb-6">
     <h2 class="card-title mb-4">Establecer Meta de Piezas</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
       <select id="metaSucursal" class="p-2 border rounded-lg">
         <option value="">Seleccionar Sucursal</option>
+      </select>
+      <select id="metaProducto" class="p-2 border rounded-lg">
+        <option value="">Seleccionar Producto</option>
+      </select>
+      <select id="metaMes" class="p-2 border rounded-lg">
+        <option value="">Seleccionar Mes</option>
       </select>
       <input type="number" id="metaPiezas" class="p-2 border rounded-lg" placeholder="Piezas">
       <button id="btnEstablecerMeta" class="bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700">Establecer Meta</button>
     </div>
   </div>
-
   <!-- Formulario de Registro de Ventas -->
   <div class="card bg-white p-4">
     <h2 class="card-title mb-4">Registrar Venta (Piezas)</h2>
-    <form id="ventaForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <form id="ventaForm" class="grid grid-cols-1 md:grid-cols-5 gap-4">
       <select id="sucursal_id" class="p-2 border rounded-lg" required>
         <option value="">Seleccionar Sucursal</option>
       </select>
       <select id="vendedor_id" class="p-2 border rounded-lg" required>
         <option value="">Seleccionar Vendedor</option>
       </select>
+      <select id="producto" class="p-2 border rounded-lg" required>
+        <option value="">Seleccionar Producto</option>
+      </select>
       <input type="number" id="piezas" class="p-2 border rounded-lg" placeholder="Piezas" required>
       <button type="submit" class="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700">Registrar</button>
     </form>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
